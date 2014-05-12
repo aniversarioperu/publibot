@@ -1,0 +1,1 @@
+default 8 chars minus special ones

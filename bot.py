@@ -44,21 +44,15 @@ def get_recent_tweets(user_list):
         twitter_handle = user[1].replace("@", "")
         payload = {
             'screen_name': twitter_handle,
-            'count': 2,
+            'count': 3200,
             }
         try:
             r = requests.get(url, auth=oauth, params=payload)
             data = r.json()
-            for i in data:
-                tweet = {}
-                tweet['tweet_id'] = i['id']
-                tweet['screen_name'] = i['user']['screen_name']
-                tweet['user_id'] = i['user']['id']
-                tweet['status'] = i['text']
-                f = open("tuits.csv", "w")
-                f.write(json.dumps(tweet, indent=4))
+            for tweet in data:
+                f = open("tuits.json", "a+")
+                f.write(json.dumps(tweet) + "\n")
                 f.close()
-                sys.exit(0)
         except requests.exceptions.ConnectionError:
             print("Error", r.text)
 

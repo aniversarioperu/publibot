@@ -40,21 +40,57 @@ def get_recent_tweets(user_list):
 
     url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
     for user in user_list:
+        max_id = 0
+        new_max_id = None
         data = False
         twitter_handle = user[1].replace("@", "")
-        payload = {
-            'screen_name': twitter_handle,
-            'count': 3200,
-            }
-        try:
-            r = requests.get(url, auth=oauth, params=payload)
-            data = r.json()
-            for tweet in data:
-                f = open("tuits.json", "a+")
-                f.write(json.dumps(tweet) + "\n")
-                f.close()
-        except requests.exceptions.ConnectionError:
-            print("Error", r.text)
+        filename = twitter_handle + ".json"
+
+        i = 0
+        while max_id != new_max_id:
+            print "Max_id" , max_id
+            print "New_max_id" , new_max_id
+
+            if max_id == 0 or max_id == None:
+                payload = {
+                    'screen_name': twitter_handle,
+                    'count': 200,
+                    }
+            else:
+                new_max_id = get_max_id(filename)
+                max_id = new_max_id
+                payload = {
+                    'screen_name': twitter_handle,
+                    'count': 200,
+                    'max_id': max_id,
+                    }
+
+            try:
+                print payload
+                r = requests.get(url, auth=oauth, params=payload)
+                data = r.json()
+                for item in data:
+                    tweet = {}
+                    tweet['tweet_id'] = item['id']
+                    tweet['screen_name'] = item['user']['screen_name']
+                    tweet['user_id'] = item['user']['id']
+                    tweet['status'] = item['text']
+                    f = codecs.open(filename, "a+", "utf-8")
+                    f.write(json.dumps(tweet) + "\n")
+                    f.close()
+                    max_id = get_max_id(filename)
+            except requests.exceptions.ConnectionError:
+                print("Error", r.text)
+
+
+def get_max_id(filename):
+    try:
+        with codecs.open(filename, "r", "utf-8") as handle:
+            ids = [json.loads(i)['tweet_id'] for i in handle]
+        # return smallest number
+        return sorted(ids)[0]
+    except:
+        return None
 
 
 def main():

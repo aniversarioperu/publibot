@@ -4,6 +4,7 @@
 import argparse
 from argparse import RawTextHelpFormatter
 import codecs
+from time import sleep
 import json
 import sys
 
@@ -48,7 +49,7 @@ def get_recent_tweets(user_list):
 
         i = 0
         while max_id != new_max_id:
-            print "Max_id" , max_id
+            print "\nMax_id" , max_id
             print "New_max_id" , new_max_id
 
             if max_id == 0 or max_id == None:
@@ -66,7 +67,7 @@ def get_recent_tweets(user_list):
                     }
 
             try:
-                print payload
+                sleep(4)
                 r = requests.get(url, auth=oauth, params=payload)
                 data = r.json()
                 for item in data:
@@ -75,6 +76,11 @@ def get_recent_tweets(user_list):
                     tweet['screen_name'] = item['user']['screen_name']
                     tweet['user_id'] = item['user']['id']
                     tweet['status'] = item['text']
+                    tweet['created_at'] = item['created_at']
+                    tweet['utc_offset'] = item['user']['utc_offset']
+                    if 'geo' in item and item['geo'] != None:
+                        tweet['latitude'] = item['geo']['coordinates'][0]
+                        tweet['longitude'] = item['geo']['coordinates'][1]
                     f = codecs.open(filename, "a+", "utf-8")
                     f.write(json.dumps(tweet) + "\n")
                     f.close()

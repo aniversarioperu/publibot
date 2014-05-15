@@ -47,16 +47,21 @@ def upload_starting_data():
 
 
 def get_since_id(twitter_handle):
-    twitter_handle = "munimiraflores"
+    twitter_handle = "muniarequipa"
     # get the last tweet for that user in our database
     dbfile = os.path.join(config.local_folder, "tuits.db")
     db = dataset.connect("sqlite:///" + dbfile)
-    query = "select * from tuits where screen_name='" + twitter_handle
-    query += "'"
+    query = "select tweet_id from tuits where "
+    query += "screen_name='" + twitter_handle + "' "
+    query += "order by tweet_id desc limit 1"
     print query
     res = db.query(query)
     for i in res:
-        print i, twitter_handle
+        since_id = i['tweet_id']
+    if since_id:
+        return since_id
+    else:
+        return False
 
 
 def update_our_database():

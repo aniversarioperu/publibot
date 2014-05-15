@@ -47,12 +47,19 @@ def get_recent_tweets(user_list):
         twitter_handle = user[1].replace("@", "")
         filename = twitter_handle + ".json"
 
-        i = 0
         while max_id != new_max_id:
             print "\nMax_id" , max_id
             print "New_max_id" , new_max_id
+            print user, "\n"
 
-            if max_id == 0 or max_id == None:
+            if max_id == 0:
+                payload = {
+                    'screen_name': twitter_handle,
+                    'count': 200,
+                    }
+            elif max_id == None:
+                print "yes none"
+                new_max_id = None
                 payload = {
                     'screen_name': twitter_handle,
                     'count': 200,
@@ -84,9 +91,9 @@ def get_recent_tweets(user_list):
                     f = codecs.open(filename, "a+", "utf-8")
                     f.write(json.dumps(tweet) + "\n")
                     f.close()
-                    max_id = get_max_id(filename)
             except requests.exceptions.ConnectionError:
                 print("Error", r.text)
+            max_id = get_max_id(filename)
 
 
 def get_max_id(filename):

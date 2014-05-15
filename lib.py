@@ -27,7 +27,7 @@ def create_database():
         except:
             pass
 
-def upload_staring_data():
+def upload_starting_data():
     create_database()
 
     dbfile = os.path.join(config.local_folder, "tuits.db")
@@ -40,5 +40,5 @@ def upload_staring_data():
     table.insert_many(tuits)
 
 
-upload_staring_data()
+upload_starting_data()
 

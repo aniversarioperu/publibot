@@ -73,7 +73,7 @@ def get_recent_tweets(user_list):
                 for item in data:
                     tweet = {}
                     tweet['tweet_id'] = item['id']
-                    tweet['screen_name'] = item['user']['screen_name']
+                    tweet['screen_name'] = item['user']['screen_name'].lower()
                     tweet['user_id'] = item['user']['id']
                     tweet['status'] = item['text']
                     tweet['created_at'] = item['created_at']

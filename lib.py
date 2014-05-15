@@ -52,7 +52,8 @@ def get_since_id(twitter_handle):
     dbfile = os.path.join(config.local_folder, "tuits.db")
     db = dataset.connect("sqlite:///" + dbfile)
     query = "select * from tuits where screen_name='" + twitter_handle
-    query += "' order by tweet_id"
+    query += "'"
+    print query
     res = db.query(query)
     for i in res:
         print i, twitter_handle
@@ -69,5 +70,5 @@ def update_our_database():
 
 
 
-upload_starting_data()
-#update_our_database()
+#upload_starting_data()
+update_our_database()

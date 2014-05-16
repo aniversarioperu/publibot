@@ -45,8 +45,9 @@ def do_capture(tweet_id):
 
 
 def main():
-    tweet_id = 467337666879827968
-    capture(tweet_id)
+    #tweet_id = 467337666879827968
+    tweet_id = sys.argv[1].strip()
+    do_capture(tweet_id)
 
 
 if __name__ == "__main__":

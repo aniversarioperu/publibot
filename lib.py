@@ -70,7 +70,8 @@ def update_our_database():
     create_database()
 
     for user in get_user_list():
-        twitter_handle = user[1].replace("@", "")
+        twitter_handle = user[1].replace("@", "").lower()
+        print twitter_handle
         #twitter_handle = "munimiraflores"
         since_id = get_since_id(twitter_handle)
         get_tuits_since(since_id, twitter_handle)

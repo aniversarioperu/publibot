@@ -3,9 +3,12 @@ import glob
 import json
 import os
 import os.path
+from time import sleep
 
 import dataset
+import requests
 
+import api
 import config
 from bot import get_user_list
 
@@ -47,18 +50,17 @@ def upload_starting_data():
 
 
 def get_since_id(twitter_handle):
-    twitter_handle = "muniarequipa"
     # get the last tweet for that user in our database
     dbfile = os.path.join(config.local_folder, "tuits.db")
     db = dataset.connect("sqlite:///" + dbfile)
     query = "select tweet_id from tuits where "
     query += "screen_name='" + twitter_handle + "' "
     query += "order by tweet_id desc limit 1"
-    print query
     res = db.query(query)
     for i in res:
         since_id = i['tweet_id']
     if since_id:
+        print "Found since_id # %i" % since_id
         return since_id
     else:
         return False
@@ -67,11 +69,51 @@ def get_since_id(twitter_handle):
 def update_our_database():
     create_database()
 
-    url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
     for user in get_user_list():
         twitter_handle = user[1].replace("@", "")
-        print get_since_id(twitter_handle)
+        #twitter_handle = "munimiraflores"
+        since_id = get_since_id(twitter_handle)
+        get_tuits_since(since_id, twitter_handle)
 
+
+def upload_my_tweet(tweet):
+    dbfile = os.path.join(config.local_folder, "tuits.db")
+    db = dataset.connect("sqlite:///" + dbfile)
+    table = db['tuits']
+    if table.find_one(tweet_id=tweet['tweet_id']) is None:
+        table.insert(tweet)
+        print "Uploaded tweet @%s: %s\n" % (tweet['screen_name'], tweet['status'])
+
+
+def get_tuits_since(since_id, twitter_handle):
+    oauth = api.get_oauth()
+
+    url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
+    payload = {
+        'screen_name': twitter_handle,
+        'count': 200,
+        'since_id': since_id,
+        }
+    print payload
+    try:
+        sleep(4)
+        r = requests.get(url, auth=oauth, params=payload)
+        data = r.json()
+        for item in data:
+            tweet = {}
+            tweet['tweet_id'] = item['id']
+            tweet['screen_name'] = item['user']['screen_name'].lower()
+            tweet['user_id'] = item['user']['id']
+            tweet['status'] = item['text']
+            tweet['created_at'] = item['created_at']
+            tweet['utc_offset'] = item['user']['utc_offset']
+            if 'geo' in item and item['geo'] != None:
+                tweet['latitude'] = item['geo']['coordinates'][0]
+                tweet['longitude'] = item['geo']['coordinates'][1]
+            print tweet
+            upload_my_tweet(tweet)
+    except requests.exceptions.ConnectionError:
+        print("Error", r.text)
 
 
 

@@ -59,11 +59,8 @@ def get_since_id(twitter_handle):
     res = db.query(query)
     for i in res:
         since_id = i['tweet_id']
-    if since_id:
         print "Found since_id # %i" % since_id
         return since_id
-    else:
-        return False
 
 
 def update_our_database():

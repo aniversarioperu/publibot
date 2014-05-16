@@ -1,3 +1,5 @@
 requests_oauthlib
 requests
 dataset
+pyscreenshot
+image

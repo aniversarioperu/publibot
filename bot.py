@@ -11,6 +11,7 @@ import sys
 import requests
 
 import api
+import lib
 
 
 description = u'Monitorea tuiter en búsqueda de publidad estatal'
@@ -110,9 +111,12 @@ def main():
     # publicidad estatal prohibida desde el 24 de Enero
 
     # authorities list
-    user_list = get_user_list()
+    # run this the first time only
+    # user_list = get_user_list()
+    # get_recent_tweets(user_list)
 
-    get_recent_tweets(user_list)
+    # this is for updating, run as needed
+    lib.update_our_database()
 
 
 

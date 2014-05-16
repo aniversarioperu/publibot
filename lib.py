@@ -3,6 +3,7 @@ import glob
 import json
 import os
 import os.path
+import subprocess
 from time import sleep
 
 import dataset
@@ -80,7 +81,11 @@ def upload_my_tweet(tweet):
     table = db['tuits']
     if table.find_one(tweet_id=tweet['tweet_id']) is None:
         table.insert(tweet)
-        print "Uploaded tweet @%s: %s\n" % (tweet['screen_name'], tweet['status'])
+        print "Uploaded @%s: %s\n" % (tweet['screen_name'], tweet['status'])
+
+        # take screenshot of tweet
+        cmd = "python take_screenshot.py " + str(tweet['tweet_id'])
+        p = subprocess.check_call(cmd, shell=True)
 
 
 def get_tuits_since(since_id, twitter_handle):
@@ -114,6 +119,10 @@ def get_tuits_since(since_id, twitter_handle):
         print("Error", r.text)
 
 
-
 #upload_starting_data()
-update_our_database()
+def main():
+    update_our_database()
+
+
+if __name__ == "__main__":
+    main()

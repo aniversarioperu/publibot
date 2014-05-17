@@ -123,7 +123,7 @@ def get_tuits_since(since_id, twitter_handle):
 
 def get_screenshots_using_db():
     # publicidad está prohibida desde esta fecha
-    DATE_LIMIT = datetime.datetime(2014, 1, 24, 0, 0)
+    DATE_LIMIT = datetime(2014, 1, 24, 0, 0)
 
     dbfile = os.path.join(config.local_folder, "tuits.db")
     db = dataset.connect("sqlite:///" + dbfile)
@@ -133,7 +133,7 @@ def get_screenshots_using_db():
         if date > DATE_LIMIT:
             screenshot_filename = "screenshots/" + str(i['tweet_id']) + ".png"
             if not os.path.isfile(screenshot_filename):
-                cmd = "python take_screenshots.py " + str(i['tweet_id'])
+                cmd = "python take_screenshot.py " + str(i['tweet_id'])
                 p = subprocess.check_call(cmd, shell=True)
 
 

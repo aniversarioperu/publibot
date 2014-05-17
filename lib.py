@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import codecs
 import glob
 import json
@@ -117,6 +118,38 @@ def get_tuits_since(since_id, twitter_handle):
             upload_my_tweet(tweet)
     except requests.exceptions.ConnectionError:
         print("Error", r.text)
+
+
+def get_screenshots_using_db():
+    # publicidad está prohibida desde esta fecha
+    DATE_LIMIT = datetime.datetime(2014, 1, 24, 0, 0)
+
+    dbfile = os.path.join(config.local_folder, "tuits.db")
+    db = dataset.connect("sqlite:///" + dbfile)
+    res = db.query("select * from tuits")
+    for i in res:
+        date = datetime.strptime(i['created_at'], "%a %b %d %H:%M:%S +%f %Y")
+        if date > DATE_LIMIT:
+            screenshot_filename = "screenshots/" + str(i['tweet_id']) + ".png"
+            if not os.path.isfile(screenshot_filename):
+                cmd = "python take_screenshots.py " + str(i['tweet_id'])
+                p = subprocess.check_call(cmd, shell=True)
+
+
+def delete_unnecessary_screenshots_using_db():
+    # publicidad está prohibida desde esta fecha
+    DATE_LIMIT = datetime.datetime(2014, 1, 24, 0, 0)
+
+    dbfile = os.path.join(config.local_folder, "tuits.db")
+    db = dataset.connect("sqlite:///" + dbfile)
+    res = db.query("select * from tuits")
+    for i in res:
+        date = datetime.strptime(i['created_at'], "%a %b %d %H:%M:%S +%f %Y")
+        if date < DATE_LIMIT:
+            screenshot_filename = "screenshots/" + str(i['tweet_id']) + ".png"
+            if os.path.isfile(screenshot_filename):
+                os.remove(screenshot_filename)
+                print "Removed file %s" % screenshot_filename
 
 
 #upload_starting_data()

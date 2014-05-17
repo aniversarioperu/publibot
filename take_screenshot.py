@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # source http://stackoverflow.com/a/12031316/3605870
 import sys
 import time

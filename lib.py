@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import codecs
+from datetime import datetime
 import glob
 import json
 import os
@@ -138,7 +139,7 @@ def get_screenshots_using_db():
 
 def delete_unnecessary_screenshots_using_db():
     # publicidad está prohibida desde esta fecha
-    DATE_LIMIT = datetime.datetime(2014, 1, 24, 0, 0)
+    DATE_LIMIT = datetime(2014, 1, 24, 0, 0)
 
     dbfile = os.path.join(config.local_folder, "tuits.db")
     db = dataset.connect("sqlite:///" + dbfile)

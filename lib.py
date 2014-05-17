@@ -129,6 +129,7 @@ def get_screenshots_using_db():
     db = dataset.connect("sqlite:///" + dbfile)
     res = db.query("select * from tuits")
     for i in res:
+        print "Created at %s" % i['created_at']
         date = datetime.strptime(i['created_at'], "%a %b %d %H:%M:%S +%f %Y")
         if date > DATE_LIMIT:
             screenshot_filename = "screenshots/" + str(i['tweet_id']) + ".png"
@@ -151,6 +152,23 @@ def delete_unnecessary_screenshots_using_db():
             if os.path.isfile(screenshot_filename):
                 os.remove(screenshot_filename)
                 print "Removed file %s" % screenshot_filename
+
+
+def extract_all_status():
+    # publicidad está prohibida desde esta fecha
+    DATE_LIMIT = datetime(2014, 1, 24, 0, 0)
+
+    dbfile = os.path.join(config.local_folder, "tuits.db")
+    db = dataset.connect("sqlite:///" + dbfile)
+    res = db.query("select * from tuits")
+
+    f = codecs.open("all_status.txt", "w", "utf-8")
+    for i in res:
+        date = datetime.strptime(i['created_at'], "%a %b %d %H:%M:%S +%f %Y")
+        if date < DATE_LIMIT:
+            output = i['status'] + "\t|||\t" + str(i['tweet_id']) + "\n"
+            f.write(output)
+    f.close()
 
 
 #upload_starting_data()

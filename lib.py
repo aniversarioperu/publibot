@@ -47,7 +47,7 @@ def upload_starting_data():
     tuits = []
     with codecs.open(filename, "r", "utf-8") as handle:
         for line in handle.readlines():
-            tuit = json.loads(line)
+            tuit = json.loads(line.strip())
             tuit['screen_name'] = tuit['screen_name'].lower()
             tuits.append(tuit)
     table.insert_many(tuits)
@@ -118,8 +118,8 @@ def get_tuits_since(since_id, twitter_handle):
                 tweet['longitude'] = item['geo']['coordinates'][1]
             print tweet
             upload_my_tweet(tweet)
-    except requests.exceptions.ConnectionError:
-        print("Error", r.text)
+    except requests.exceptions.ConnectionError as e:
+        print("Error", e)
 
 
 def get_screenshots_using_db():
@@ -184,6 +184,7 @@ def report_cherry():
         line = line.strip()
         query += "status like '%" + line + "%' OR "
     query = re.sub(" OR $", "", query)
+    query += " order by tweet_id desc"
 
     # publicidad está prohibida desde esta fecha
     DATE_LIMIT = datetime(2014, 1, 24, 0, 0)
@@ -197,6 +198,7 @@ def report_cherry():
         date = datetime.strptime(i['created_at'], "%a %b %d %H:%M:%S +%f %Y")
         if date > DATE_LIMIT:
             i['created_at'] = date.strftime('%b %d, %Y')
+            i['tweet_id'] = str(i['tweet_id'])
             cherry_tweets.append(i)
     f = codecs.open("cherry_tweets.json", "w", "utf-8")
     f.write(json.dumps(cherry_tweets))

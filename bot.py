@@ -92,8 +92,8 @@ def get_recent_tweets(user_list):
                     f = codecs.open(filename, "a+", "utf-8")
                     f.write(json.dumps(tweet) + "\n")
                     f.close()
-            except requests.exceptions.ConnectionError:
-                print("Error", r.text)
+            except requests.exceptions.ConnectionError as e:
+                print("Error", e)
             max_id = get_max_id(filename)
 
 

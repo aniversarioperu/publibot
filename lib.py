@@ -174,6 +174,7 @@ def extract_all_status():
 
 
 def report_cherry():
+    # cherry tweets with forbidden adverts
     # input a list of keywords
     keywords = os.path.join(config.local_folder, "keywords.txt")
 
@@ -195,8 +196,8 @@ def report_cherry():
     for i in res:
         date = datetime.strptime(i['created_at'], "%a %b %d %H:%M:%S +%f %Y")
         if date > DATE_LIMIT:
+            i['created_at'] = date.strftime('%b %d, %Y')
             cherry_tweets.append(i)
-             i['status'], i['tweet_id']
     f = codecs.open("cherry_tweets.json", "w", "utf-8")
     f.write(json.dumps(cherry_tweets))
     f.close()

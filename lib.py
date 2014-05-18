@@ -5,6 +5,7 @@ import glob
 import json
 import os
 import os.path
+import re
 import subprocess
 from time import sleep
 
@@ -169,6 +170,35 @@ def extract_all_status():
             status = i['status'].replace("\n", " ")
             output = status + "\t|||\t" + str(i['tweet_id']) + "\n"
             f.write(output)
+    f.close()
+
+
+def report_cherry():
+    # input a list of keywords
+    keywords = os.path.join(config.local_folder, "keywords.txt")
+
+    # make query
+    query = "select * from tuits where "
+    for line in codecs.open(keywords, "r", "utf8").readlines():
+        line = line.strip()
+        query += "status like '%" + line + "%' OR "
+    query = re.sub(" OR $", "", query)
+
+    # publicidad está prohibida desde esta fecha
+    DATE_LIMIT = datetime(2014, 1, 24, 0, 0)
+
+    dbfile = os.path.join(config.local_folder, "tuits.db")
+    db = dataset.connect("sqlite:///" + dbfile)
+    res = db.query(query)
+
+    cherry_tweets = []
+    for i in res:
+        date = datetime.strptime(i['created_at'], "%a %b %d %H:%M:%S +%f %Y")
+        if date > DATE_LIMIT:
+            cherry_tweets.append(i)
+             i['status'], i['tweet_id']
+    f = codecs.open("cherry_tweets.json", "w", "utf-8")
+    f.write(json.dumps(cherry_tweets))
     f.close()
 
 

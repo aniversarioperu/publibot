@@ -8,6 +8,7 @@ import os.path
 import re
 import subprocess
 from time import sleep
+import sys
 
 import dataset
 import requests
@@ -203,6 +204,39 @@ def report_cherry():
     f = codecs.open("cherry_tweets.json", "w", "utf-8")
     f.write(json.dumps(cherry_tweets))
     f.close()
+
+
+def get_profile_image_url():
+    user_list = get_user_list()
+    oauth = api.get_oauth()
+    for user in user_list:
+        url = "https://api.twitter.com/1.1/users/show.json"
+        screen_name = user[1].replace("@", "")
+        payload = {
+                'screen_name': screen_name,
+                }
+        r = requests.get(url, auth=oauth, params=payload)
+        profile_url = r.json()['profile_image_url']
+        download_profile_image(profile_url, screen_name)
+
+
+def download_profile_image(url, screen_name):
+    # folder to keep our twitter profile images
+    directory = os.path.join(config.local_folder, "avatars")
+
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    path = screen_name + ".jpg"
+    path = os.path.join(directory, path.lower())
+    if not os.path.isfile(path):
+        r = requests.get(url, stream=True)
+        if r.status_code == 200:
+            with open(path, 'wb') as f:
+                for chunk in r.iter_content():
+                    f.write(chunk)
+
+    return screen_name.lower()
 
 
 #upload_starting_data()

@@ -3,7 +3,7 @@ $.getJSON("cherry_tweets.json", function(data) {
     $.each(data, function(key, val){
         var out = "<div class='media'>\n";
         out += "<span class='pull-left' href='#'>";
-        out += "<img class='img-rounded' src='img.png' />";
+        out += "<img class='img-rounded' src='avatars/" + val.screen_name + ".jpg' />";
         out += "</span>\n";
 
         out += "<span class='pull-right' href='#'><a href='https://twitter.com/" + val.screen_name + "/status/" + val.tweet_id + "'>";

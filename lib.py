@@ -166,7 +166,8 @@ def extract_all_status():
     for i in res:
         date = datetime.strptime(i['created_at'], "%a %b %d %H:%M:%S +%f %Y")
         if date < DATE_LIMIT:
-            output = i['status'] + "\t|||\t" + str(i['tweet_id']) + "\n"
+            status = i['status'].replace("\n", " ")
+            output = status + "\t|||\t" + str(i['tweet_id']) + "\n"
             f.write(output)
     f.close()
 

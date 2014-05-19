@@ -26,6 +26,14 @@ parser.add_argument(
     required=False,
     dest='update',
 )
+parser.add_argument(
+    '-r',
+    '--report',
+    action='store_true',
+    help='Reportar tuits que se sospechen contengan publicidad municipal',
+    required=False,
+    dest='report',
+)
 
 args = parser.parse_args()
 
@@ -117,6 +125,10 @@ def main():
     if args.update:
         print "** Updating database **"
         lib.update_our_database()
+
+    if args.report:
+        print "** Making report of tweets as JSON file **"
+        lib.report_cherry()
 
 
 if __name__ == "__main__":

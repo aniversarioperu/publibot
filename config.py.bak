@@ -1,0 +1,7 @@
+key = ""
+secret = ""
+token = ""
+token_secret = ""
+
+# folder que contiene todos los scripts y base de datos
+local_folder = ""

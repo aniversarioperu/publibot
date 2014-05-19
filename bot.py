@@ -20,12 +20,12 @@ parser = argparse.ArgumentParser(
     formatter_class=RawTextHelpFormatter,
     )
 parser.add_argument(
-    '-p',
-    '--page',
+    '-u',
+    '--update',
     action='store_true',
-    help='Generate Google Map page',
+    help='Bajar nuevos tuits, actualizar database, y capturar pantalla',
     required=False,
-    dest='page'
+    dest='update',
     )
 
 args = parser.parse_args()
@@ -116,7 +116,9 @@ def main():
     # get_recent_tweets(user_list)
 
     # this is for updating, run as needed
-    lib.update_our_database()
+    if args.update:
+        print "** Updating database **"
+        lib.update_our_database()
 
 
 

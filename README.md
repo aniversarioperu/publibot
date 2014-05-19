@@ -21,3 +21,8 @@ Estoy usando SQLite y toda la info se guarda en el archivo ``tuits.db``.
 # Correr el bot
 * Decargar nuevos tuits, actualizar base de datos y hacer capturas de pantalla:
 ``python bot.py -u``
+
+# Otros
+Para reducir el tamaño de la capturas de pantalla usar:
+
+    > convert input.png -precision 8 -type palette -colors 255 output.png

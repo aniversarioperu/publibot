@@ -212,8 +212,8 @@ def get_profile_image_url():
         url = "https://api.twitter.com/1.1/users/show.json"
         screen_name = user[1].replace("@", "")
         payload = {
-                'screen_name': screen_name,
-                }
+            'screen_name': screen_name,
+        }
         r = requests.get(url, auth=oauth, params=payload)
         profile_url = r.json()['profile_image_url']
         download_profile_image(profile_url, screen_name)

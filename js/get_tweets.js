@@ -21,9 +21,9 @@ $.getJSON("cherry_tweets.json", function(data) {
         out += "</ul>\n";
 
         out += "<ul class='pull-right'>\n";
-        out += "<li><a role='button' class='icon-reply' href='https://twitter.com/intent/tweet?in_reply_to=" + "tweet_id" + "'><span>&nbsp;&nbsp;&nbsp;&nbsp;Reply&nbsp;</span></a></li>";
-        out += "<li><a role='button' class='icon-retweet' href='https://twitter.com/intent/retweet?tweet_id=" + "tweet_id" + "'><span>&nbsp;&nbsp;&nbsp;&nbsp;Retweet&nbsp;</span></a></li>";
-        out += "<li><a role='button' class='icon-favorite' href='https://twitter.com/intent/favorite?tweet_id=" + "tweet_id" + "'><span>&nbsp;&nbsp;&nbsp;&nbsp;Favorite&nbsp;</span></a></li>";
+        out += "<li><a role='button' class='icon-reply' href='https://twitter.com/intent/tweet?in_reply_to=" + val.tweet_id + "'><span>&nbsp;&nbsp;&nbsp;&nbsp;Reply&nbsp;</span></a></li>";
+        out += "<li><a role='button' class='icon-retweet' href='https://twitter.com/intent/retweet?tweet_id=" + val.tweet_id + "'><span>&nbsp;&nbsp;&nbsp;&nbsp;Retweet&nbsp;</span></a></li>";
+        out += "<li><a role='button' class='icon-favorite' href='https://twitter.com/intent/favorite?tweet_id=" + val.tweet_id + "'><span>&nbsp;&nbsp;&nbsp;&nbsp;Favorite&nbsp;</span></a></li>";
         out += "</ul>";
         out += "</div>\n\n";
         items.push(out);

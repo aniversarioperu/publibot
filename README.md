@@ -25,4 +25,7 @@ Estoy usando SQLite y toda la info se guarda en el archivo ``tuits.db``.
 # Otros
 Para reducir el tamaño de la capturas de pantalla usar:
 
-    > convert input.png -precision 8 -type palette -colors 255 output.png
+    > cd screenshots
+    > ls | parallel -I {} convert {} -precision 8 -type palette -colors 255 {.}_.png
+    > ls | grep -v '_' | parallel -I {} echo {.}_.png {}
+

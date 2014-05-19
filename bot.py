@@ -6,7 +6,6 @@ from argparse import RawTextHelpFormatter
 import codecs
 from time import sleep
 import json
-import sys
 
 import requests
 
@@ -18,7 +17,7 @@ description = u'Monitorea tuiter en búsqueda de publidad estatal'
 parser = argparse.ArgumentParser(
     description=description,
     formatter_class=RawTextHelpFormatter,
-    )
+)
 parser.add_argument(
     '-u',
     '--update',
@@ -26,7 +25,7 @@ parser.add_argument(
     help='Bajar nuevos tuits, actualizar database, y capturar pantalla',
     required=False,
     dest='update',
-    )
+)
 
 args = parser.parse_args()
 
@@ -44,27 +43,26 @@ def get_recent_tweets(user_list):
     for user in user_list:
         max_id = 0
         new_max_id = None
-        data = False
         twitter_handle = user[1].replace("@", "")
         filename = twitter_handle + ".json"
 
         while max_id != new_max_id:
-            print "\nMax_id" , max_id
-            print "New_max_id" , new_max_id
+            print "\nMax_id", max_id
+            print "New_max_id", new_max_id
             print user, "\n"
 
             if max_id == 0:
                 payload = {
                     'screen_name': twitter_handle,
                     'count': 200,
-                    }
-            elif max_id == None:
+                }
+            elif max_id is None:
                 print "yes none"
                 new_max_id = None
                 payload = {
                     'screen_name': twitter_handle,
                     'count': 200,
-                    }
+                }
             else:
                 new_max_id = get_max_id(filename)
                 max_id = new_max_id
@@ -72,7 +70,7 @@ def get_recent_tweets(user_list):
                     'screen_name': twitter_handle,
                     'count': 200,
                     'max_id': max_id,
-                    }
+                }
 
             try:
                 sleep(4)
@@ -86,7 +84,7 @@ def get_recent_tweets(user_list):
                     tweet['status'] = item['text']
                     tweet['created_at'] = item['created_at']
                     tweet['utc_offset'] = item['user']['utc_offset']
-                    if 'geo' in item and item['geo'] != None:
+                    if 'geo' in item and item['geo']:
                         tweet['latitude'] = item['geo']['coordinates'][0]
                         tweet['longitude'] = item['geo']['coordinates'][1]
                     f = codecs.open(filename, "a+", "utf-8")
@@ -119,7 +117,6 @@ def main():
     if args.update:
         print "** Updating database **"
         lib.update_our_database()
-
 
 
 if __name__ == "__main__":

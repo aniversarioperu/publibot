@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 import codecs
 from datetime import datetime
-import glob
 import json
 import os
 import os.path
 import re
 import subprocess
 from time import sleep
-import sys
 
 import dataset
 import requests
+import sqlalchemy
 
 import api
 import config
@@ -100,7 +99,7 @@ def get_tuits_since(since_id, twitter_handle):
         'screen_name': twitter_handle,
         'count': 200,
         'since_id': since_id,
-        }
+    }
     print payload
     try:
         sleep(4)
@@ -114,7 +113,7 @@ def get_tuits_since(since_id, twitter_handle):
             tweet['status'] = item['text']
             tweet['created_at'] = item['created_at']
             tweet['utc_offset'] = item['user']['utc_offset']
-            if 'geo' in item and item['geo'] != None:
+            if 'geo' in item and item['geo']:
                 tweet['latitude'] = item['geo']['coordinates'][0]
                 tweet['longitude'] = item['geo']['coordinates'][1]
             print tweet
@@ -213,8 +212,8 @@ def get_profile_image_url():
         url = "https://api.twitter.com/1.1/users/show.json"
         screen_name = user[1].replace("@", "")
         payload = {
-                'screen_name': screen_name,
-                }
+            'screen_name': screen_name,
+        }
         r = requests.get(url, auth=oauth, params=payload)
         profile_url = r.json()['profile_image_url']
         download_profile_image(profile_url, screen_name)

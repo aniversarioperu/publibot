@@ -128,6 +128,8 @@ def main():
     if args.update:
         print "** Updating database **"
         lib.update_our_database()
+        print "** Generating site **"
+        lib.generate_site()
 
     if args.report:
         print "** Making report of tweets as JSON file **"

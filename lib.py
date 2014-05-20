@@ -5,6 +5,7 @@ import json
 import os
 import os.path
 import re
+import shutil
 import subprocess
 from time import sleep
 
@@ -16,6 +17,25 @@ import api
 import config
 from bot import get_user_list
 from take_screenshot import do_capture
+
+
+def generate_site():
+    report_cherry()
+    shutil.copy2(
+            os.path.join(config.local_folder, "cherry_tweets.json"),
+            os.path.join(config.dest_folder)
+    )
+    shutil.copy2(
+            os.path.join(config.local_folder, "index.html"),
+            os.path.join(config.dest_folder)
+    )
+    shutil.copy2(
+            os.path.join(config.local_folder, "js/get_tweets.js"),
+            os.path.join(config.dest_folder, "js")
+    )
+    cmd = "rsync -au " + os.path.join(config.local_folder, "screenshots/*")
+    cmd += " " + os.path.join(config.dest_folder, "screenshots/.")
+    p = subprocess.check_call(cmd, shell=True)
 
 
 def create_database():
@@ -186,7 +206,7 @@ def report_cherry():
         line = line.strip()
         query += "status like '%" + line + "%' OR "
     query = re.sub(" OR $", "", query)
-    query += " order by tweet_id desc limit"
+    query += " order by tweet_id desc limit 20"
 
     # publicidad está prohibida desde esta fecha
     DATE_LIMIT = datetime(2014, 1, 24, 0, 0)

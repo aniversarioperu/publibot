@@ -179,7 +179,7 @@ def report_cherry():
     keywords = os.path.join(config.local_folder, "keywords.txt")
 
     # make query
-    query = "select * from tuits where "
+    query = "select screen_name, tweet_id, created_at, status from tuits where "
     for line in codecs.open(keywords, "r", "utf8").readlines():
         line = line.strip()
         query += "status like '%" + line + "%' OR "

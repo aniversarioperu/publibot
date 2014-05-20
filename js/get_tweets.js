@@ -1,6 +1,8 @@
-$.getJSON("cherry_tweets.json", function(data) {
+$.getJSON("data_handler.py", {start: 0} )
+    .done(function(data) {
+        console.log(data);
     var items = [];
-    $.each(data, function(key, val){
+    $.each(data.out, function(key, val){
         var out = "<div class='media'>\n";
         out += "<span class='pull-left' href='#'>";
         out += "<img class='img-rounded' src='avatars/" + val.screen_name + ".jpg' />";

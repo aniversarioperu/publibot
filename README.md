@@ -1,7 +1,7 @@
 # Instalar los requerimientos
 ``pip install -r requeriments.txt``
 
-Además requirere Python2.7 y PyQt4
+Además requirere Python2.7, xvfb y cutycapt (para capturas de pantalla).
 
 # Configuration file
 Es necesario ir a esta URL <https://apps.twitter.com> para crear un **"Twitter

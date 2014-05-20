@@ -1,50 +1,40 @@
 # -*- coding: utf-8 -*-
-# source http://stackoverflow.com/a/12031316/3605870
+import os.path
+import subprocess
 import sys
-import time
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtWebKit import *
 
-
-class Screenshot(QWebView):
-    def __init__(self):
-        self.app = QApplication(sys.argv)
-        QWebView.__init__(self)
-        self._loaded = False
-        self.loadFinished.connect(self._loadFinished)
-
-    def capture(self, url, output_file):
-        self.load(QUrl(url))
-        self.wait_load()
-        # set to webpage size
-        frame = self.page().mainFrame()
-        self.page().setViewportSize(frame.contentsSize())
-        # render image
-        image = QImage(self.page().viewportSize(), QImage.Format_ARGB32)
-        painter = QPainter(image)
-        frame.render(painter)
-        painter.end()
-        print 'saving', output_file
-        image.save(output_file)
-
-    def wait_load(self, delay=0):
-        # process app events until page loaded
-        while not self._loaded:
-            self.app.processEvents()
-            time.sleep(delay)
-        self._loaded = False
-
-    def _loadFinished(self, result):
-        self._loaded = True
+import config
 
 
 def do_capture(tweet_id):
-    tweet_id = str(tweet_id)
-    outfile = "screenshots/" + tweet_id + ".png"
-    s = Screenshot()
-    s.capture('https://twitter.com/uterope/status/' + tweet_id, outfile)
+    outfile = os.path.join(config.local_folder, "screenshots")
+    tmpfile = os.path.join(outfile, tweet_id + ".png")
+    outfile = os.path.join(outfile, tweet_id + "_.png")
 
+    if not os.path.isfile(outfile):
+        cmd = 'xvfb-run --server-args="-screen 0, 1024x768x24" '
+        cmd += ' cutycapt --url=https://twitter.com/uterope/status/'
+        cmd += tweet_id
+        cmd += ' --header=Accept-Language:en-US --min-width=650 '
+        cmd += ' --out=' + tmpfile
+        try:
+            p = subprocess.check_call(cmd, shell=True)
+        except subprocess.CalledProcessError as e:
+            print "Error subprocess "
+            print e
+
+        cmd = "convert " + tmpfile + " -precision 8 -type palette "
+        cmd += "-colors 100 " + outfile
+        try:
+            p = subprocess.check_call(cmd, shell=True)
+        except subprocess.CalledProcessError as e:
+            print "Error subprocess "
+            print e
+
+        try:
+            os.remove(tmpfile)
+        except:
+            print "Error couldn't remove tmpfile"
 
 def main():
     #tweet_id = 467337666879827968

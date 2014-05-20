@@ -15,6 +15,7 @@ import sqlalchemy
 import api
 import config
 from bot import get_user_list
+from take_screenshot import do_capture
 
 
 def create_database():
@@ -89,8 +90,7 @@ def upload_my_tweet(tweet, db):
         print tweet['status'].encode("utf8")
 
         # take screenshot of tweet
-        cmd = "python take_screenshot.py " + str(tweet['tweet_id'])
-        p = subprocess.check_call(cmd, shell=True)
+        do_capture(str(tweet['tweet_id']))
 
 
 def get_tuits_since(since_id, twitter_handle, db):

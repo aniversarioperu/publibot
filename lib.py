@@ -201,7 +201,8 @@ def report_cherry():
             i['tweet_id'] = str(i['tweet_id'])
             cherry_tweets.append(i)
     f = codecs.open("cherry_tweets.json", "w", "utf-8")
-    f.write(json.dumps(cherry_tweets))
+    for i in cherry_tweets:
+        f.write(json.dumps(i) + "\n")
     f.close()
 
 

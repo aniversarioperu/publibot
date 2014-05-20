@@ -36,8 +36,9 @@ def do_capture(tweet_id):
         except:
             print "Error couldn't remove tmpfile"
 
+
 def main():
-    #tweet_id = 467337666879827968
+    # tweet_id = 467337666879827968
     tweet_id = sys.argv[1].strip()
     do_capture(tweet_id)
 

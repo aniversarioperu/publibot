@@ -20,7 +20,7 @@
 
         out += "<div class='media-footer'>";
         out += "<ul class='pull-left'>\n";
-        out += "<li><a href='screenshots/" + val.tweet_id + ".png'>Cached Copy</a></li>";
+        out += "<li><a href='screenshots/" + val.tweet_id + "_.png'>Cached Copy</a></li>";
         out += "</ul>\n";
 
         out += "<ul class='pull-right'>\n";

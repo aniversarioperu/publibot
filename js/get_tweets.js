@@ -38,7 +38,7 @@
     $("#tuits").append("<div class='load_more'>" + button + "</div>");
         if( start > 0 ) {
             myvalue = start - 20;
-            $("#button_" + myvalue).fadeOut();
+            $("#button_" + myvalue).animate({ 'opacity': 0.0, 'marginTop': '-=50px'}, 200);
             console.log(myvalue);
         }
 });

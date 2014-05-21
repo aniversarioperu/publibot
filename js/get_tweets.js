@@ -28,7 +28,9 @@
         out += "<li><a role='button' class='icon-retweet' href='https://twitter.com/intent/retweet?tweet_id=" + val.tweet_id + "'><span>&nbsp;&nbsp;&nbsp;&nbsp;Retweet&nbsp;</span></a></li>";
         out += "<li><a role='button' class='icon-favorite' href='https://twitter.com/intent/favorite?tweet_id=" + val.tweet_id + "'><span>&nbsp;&nbsp;&nbsp;&nbsp;Favorite&nbsp;</span></a></li>";
         out += "</ul>";
-        out += "</div>\n\n";
+        out += "</div>\n";
+        out += "</div>\n";
+        out += "<hr>";
         items.push(out);
     });
 
@@ -40,7 +42,7 @@
             myvalue = start - 20;
             $("#button_" + myvalue).animate({ 'opacity': 0.0, 'marginTop': '-=60px'}, 200);
             var y = $(window).scrollTop();
-            $(window).scrollTop(y + 250);
+            $(window).scrollTop(y + 100);
             console.log(myvalue);
         }
 });

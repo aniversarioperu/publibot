@@ -132,7 +132,7 @@ def get_tuits_since(since_id, twitter_handle, db):
     }
     print payload
     try:
-        sleep(4)
+        sleep(6)
         r = requests.get(url, auth=oauth, params=payload)
         data = r.json()
         for item in data:
@@ -232,7 +232,7 @@ def retweet(i):
     }
     print payload
     try:
-        sleep(4)
+        sleep(6)
         r = requests.post(url, auth=oauth, params=payload)
         print r.json()
     except requests.exceptions.ConnectionError as e:
@@ -272,8 +272,6 @@ def report_cherry():
     f = codecs.open("cherry_tweets.json", "w", "utf-8")
     for i in cherry_tweets:
         f.write(json.dumps(i) + "\n")
-        i['retweeted'] = "yes"
-        retweet(i)
         i['tweet_id'] = int(i['tweet_id'])
         table.update(i, ['tweet_id'])
     f.close()

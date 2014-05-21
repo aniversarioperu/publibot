@@ -42,7 +42,7 @@ def generate_site():
             os.path.join(config.dest_folder, "config.py")
     )
     cmd = "rsync -au " + os.path.join(config.local_folder, "screenshots/*")
-    cmd += " " + config.dest_folder + "/screenshots/.")
+    cmd += " " + config.dest_folder + "/screenshots/."
     p = subprocess.check_call(cmd, shell=True)
 
 

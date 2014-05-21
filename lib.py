@@ -136,18 +136,21 @@ def get_tuits_since(since_id, twitter_handle, db):
         r = requests.get(url, auth=oauth, params=payload)
         data = r.json()
         for item in data:
-            tweet = {}
-            tweet['tweet_id'] = item['id']
-            tweet['screen_name'] = item['user']['screen_name'].lower()
-            tweet['user_id'] = item['user']['id']
-            tweet['status'] = item['text']
-            tweet['created_at'] = item['created_at']
-            tweet['utc_offset'] = item['user']['utc_offset']
-            if 'geo' in item and item['geo']:
-                tweet['latitude'] = item['geo']['coordinates'][0]
-                tweet['longitude'] = item['geo']['coordinates'][1]
-            #print tweet
-            upload_my_tweet(tweet, db)
+            if 'id' in item:
+                tweet = {}
+                tweet['tweet_id'] = item['id']
+                tweet['screen_name'] = item['user']['screen_name'].lower()
+                tweet['user_id'] = item['user']['id']
+                tweet['status'] = item['text']
+                tweet['created_at'] = item['created_at']
+                tweet['utc_offset'] = item['user']['utc_offset']
+                if 'geo' in item and item['geo']:
+                    tweet['latitude'] = item['geo']['coordinates'][0]
+                    tweet['longitude'] = item['geo']['coordinates'][1]
+                #print tweet
+                upload_my_tweet(tweet, db)
+            else:
+                print "Didnt get tuits", data
     except requests.exceptions.ConnectionError as e:
         print("Error", e)
 

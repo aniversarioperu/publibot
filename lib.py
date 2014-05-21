@@ -195,6 +195,18 @@ def extract_all_status():
     f.close()
 
 
+def process_tuit_msg(tuit):
+    tuit = re.sub("(https*://\w+\.\w+\/\w+)","<a href='\\1'>\\1</a>", tuit)
+
+    pattern = "@([a-zA-Z0-9_]{1,15})"
+    tuit = re.sub(pattern ,"<a href='https://twitter.com/\\1'>@\\1</a>", tuit)
+
+    pattern = "#(\w+)"
+    mystring = "<a href='https://twitter.com/search?q=%23\\1'>#\\1</a>"
+    tuit = re.sub(pattern, mystring, tuit)
+    return tuit
+
+
 def report_cherry():
     # cherry tweets with forbidden adverts
     # input a list of keywords
@@ -221,6 +233,7 @@ def report_cherry():
         if date > DATE_LIMIT:
             i['created_at'] = date.strftime('%b %d, %Y')
             i['tweet_id'] = str(i['tweet_id'])
+            i['status'] = process_tuit_msg(i['status'])
             cherry_tweets.append(i)
     f = codecs.open("cherry_tweets.json", "w", "utf-8")
     f.write(json.dumps(cherry_tweets))

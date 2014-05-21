@@ -5,6 +5,7 @@ import json
 import os
 import os.path
 import re
+import shutil
 import subprocess
 from time import sleep
 
@@ -15,6 +16,26 @@ import sqlalchemy
 import api
 import config
 from bot import get_user_list
+from take_screenshot import do_capture
+
+
+def generate_site():
+    report_cherry()
+    shutil.copy2(
+            os.path.join(config.local_folder, "cherry_tweets.json"),
+            os.path.join(config.dest_folder)
+    )
+    shutil.copy2(
+            os.path.join(config.local_folder, "index.html"),
+            os.path.join(config.dest_folder)
+    )
+    shutil.copy2(
+            os.path.join(config.local_folder, "js/get_tweets.js"),
+            os.path.join(config.dest_folder, "js")
+    )
+    cmd = "rsync -au " + os.path.join(config.local_folder, "screenshots/*")
+    cmd += " " + os.path.join(config.dest_folder, "screenshots/.")
+    p = subprocess.check_call(cmd, shell=True)
 
 
 def create_database():
@@ -53,10 +74,8 @@ def upload_starting_data():
     table.insert_many(tuits)
 
 
-def get_since_id(twitter_handle):
+def get_since_id(twitter_handle, db):
     # get the last tweet for that user in our database
-    dbfile = os.path.join(config.local_folder, "tuits.db")
-    db = dataset.connect("sqlite:///" + dbfile)
     query = "select tweet_id from tuits where "
     query += "screen_name='" + twitter_handle + "' "
     query += "order by tweet_id desc limit 1"
@@ -70,28 +89,31 @@ def get_since_id(twitter_handle):
 def update_our_database():
     create_database()
 
+    # do connection here
+    dbfile = os.path.join(config.local_folder, "tuits.db")
+    db = dataset.connect("sqlite:///" + dbfile)
+
     for user in get_user_list():
         twitter_handle = user[1].replace("@", "").lower()
         print twitter_handle
         #twitter_handle = "munimiraflores"
-        since_id = get_since_id(twitter_handle)
-        get_tuits_since(since_id, twitter_handle)
+        since_id = get_since_id(twitter_handle, db)
+        get_tuits_since(since_id, twitter_handle, db)
 
 
-def upload_my_tweet(tweet):
-    dbfile = os.path.join(config.local_folder, "tuits.db")
-    db = dataset.connect("sqlite:///" + dbfile)
+def upload_my_tweet(tweet, db):
     table = db['tuits']
     if table.find_one(tweet_id=tweet['tweet_id']) is None:
-        table.insert(tweet)
-        print "Uploaded @%s: %s\n" % (tweet['screen_name'], tweet['status'])
+        res = table.insert(tweet)
+        #print res
+        print "\nUploaded @" + tweet['screen_name'] 
+        print tweet['status'].encode("utf8")
 
         # take screenshot of tweet
-        cmd = "python take_screenshot.py " + str(tweet['tweet_id'])
-        p = subprocess.check_call(cmd, shell=True)
+        do_capture(str(tweet['tweet_id']))
 
 
-def get_tuits_since(since_id, twitter_handle):
+def get_tuits_since(since_id, twitter_handle, db):
     oauth = api.get_oauth()
 
     url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
@@ -116,8 +138,8 @@ def get_tuits_since(since_id, twitter_handle):
             if 'geo' in item and item['geo']:
                 tweet['latitude'] = item['geo']['coordinates'][0]
                 tweet['longitude'] = item['geo']['coordinates'][1]
-            print tweet
-            upload_my_tweet(tweet)
+            #print tweet
+            upload_my_tweet(tweet, db)
     except requests.exceptions.ConnectionError as e:
         print("Error", e)
 
@@ -134,9 +156,9 @@ def get_screenshots_using_db():
         date = datetime.strptime(i['created_at'], "%a %b %d %H:%M:%S +%f %Y")
         if date > DATE_LIMIT:
             screenshot_filename = "screenshots/" + str(i['tweet_id']) + ".png"
-            if not os.path.isfile(screenshot_filename):
-                cmd = "python take_screenshot.py " + str(i['tweet_id'])
-                p = subprocess.check_call(cmd, shell=True)
+            #if not os.path.isfile(screenshot_filename):
+                #cmd = "python take_screenshot.py " + str(i['tweet_id'])
+                #p = subprocess.check_call(cmd, shell=True)
 
 
 def delete_unnecessary_screenshots_using_db():
@@ -173,6 +195,18 @@ def extract_all_status():
     f.close()
 
 
+def process_tuit_msg(tuit):
+    tuit = re.sub("(https*://\w+\.\w+\/\w+)","<a href='\\1'>\\1</a>", tuit)
+
+    pattern = "@([a-zA-Z0-9_]{1,15})"
+    tuit = re.sub(pattern ,"<a href='https://twitter.com/\\1'>@\\1</a>", tuit)
+
+    pattern = "#(\w+)"
+    mystring = "<a href='https://twitter.com/search?q=%23\\1'>#\\1</a>"
+    tuit = re.sub(pattern, mystring, tuit)
+    return tuit
+
+
 def report_cherry():
     # cherry tweets with forbidden adverts
     # input a list of keywords
@@ -184,7 +218,7 @@ def report_cherry():
         line = line.strip()
         query += "status like '%" + line + "%' OR "
     query = re.sub(" OR $", "", query)
-    query += " order by tweet_id desc"
+    query += " order by tweet_id desc limit 20"
 
     # publicidad está prohibida desde esta fecha
     DATE_LIMIT = datetime(2014, 1, 24, 0, 0)
@@ -199,6 +233,7 @@ def report_cherry():
         if date > DATE_LIMIT:
             i['created_at'] = date.strftime('%b %d, %Y')
             i['tweet_id'] = str(i['tweet_id'])
+            i['status'] = process_tuit_msg(i['status'])
             cherry_tweets.append(i)
     f = codecs.open("cherry_tweets.json", "w", "utf-8")
     for i in cherry_tweets:

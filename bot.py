@@ -6,10 +6,12 @@ from argparse import RawTextHelpFormatter
 import codecs
 from time import sleep
 import json
+import os
 
 import requests
 
 import api
+import config
 import lib
 
 
@@ -39,7 +41,8 @@ args = parser.parse_args()
 
 
 def get_user_list():
-    with codecs.open("lista_autoridades.csv", "r", "utf-8") as handle:
+    filename = os.path.join(config.local_folder, "lista_autoridades.csv")
+    with codecs.open(filename, "r", "utf-8") as handle:
         user_list = [line.strip().split(",") for line in handle if '@' in line]
     return user_list
 
@@ -125,6 +128,8 @@ def main():
     if args.update:
         print "** Updating database **"
         lib.update_our_database()
+        print "** Generating site **"
+        lib.generate_site()
 
     if args.report:
         print "** Making report of tweets as JSON file **"

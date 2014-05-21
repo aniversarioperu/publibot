@@ -3,5 +3,5 @@ secret = ""
 token = ""
 token_secret = ""
 
-# folder que contiene todos los scripts y base de datos
-local_folder = ""
+local_folder = "folder de tu app"
+dest_folder = "folder www public"

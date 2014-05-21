@@ -1,4 +1,6 @@
-$.getJSON("data_handler.py", {start: 0} )
+(function( $ ) {
+    $.load_tuits = function() {
+$.getJSON("data_handler.py", {start: start} )
     .done(function(data) {
         console.log(data);
     var items = [];
@@ -31,5 +33,19 @@ $.getJSON("data_handler.py", {start: 0} )
         items.push(out);
     });
 
+    var end = start + 20;
     $("#tuits").append(items);
+    var button = '<div class="well"><button onclick="$.load_tuits(' + end + ');" id="load_more_tweets" type="button" class="btn btn-primary btn-lg btn-block">Load more tweets</button></div>';
+    $("#tuits").append("<div class='load_more'>" + button + "</div>");
+});
+};
+})(jQuery);
+
+$(document).ready(function() {
+start = 0;
+$.load_tuits(start);
+
+$("#load_more_tweets").click(function() {
+    $.load_tuits(start);
+});
 });

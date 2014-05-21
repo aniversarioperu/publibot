@@ -23,7 +23,7 @@ def make_query(start):
     start = int(start)
     end = int(start) + 20
     for i, line in enumerate(f):
-        if i > start and i < end:
+        if i >= start and i < end:
             lines.append(json.loads(line))
     f.close()
     return lines

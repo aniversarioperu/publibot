@@ -218,6 +218,27 @@ def process_tuit_msg(tuit):
     return tuit
 
 
+def retweet(i):
+    oauth = api.get_oauth()
+
+    status = "#publicidadRestringida? RT @" + i['screen_name']
+    status += " " + i['orig_status'][0:80]
+    status += " " + "https://twitter.com/" + i['screen_name']
+    status += "/status/" + str(i['tweet_id'])
+
+    url = "https://api.twitter.com/1.1/statuses/update.json"
+    payload = {
+        'status': status,
+    }
+    print payload
+    try:
+        sleep(4)
+        r = requests.post(url, auth=oauth, params=payload)
+        print r.json()
+    except requests.exceptions.ConnectionError as e:
+        print("Error", e)
+
+
 def report_cherry():
     # cherry tweets with forbidden adverts
     # input a list of keywords
@@ -236,6 +257,7 @@ def report_cherry():
 
     dbfile = os.path.join(config.local_folder, "tuits.db")
     db = dataset.connect("sqlite:///" + dbfile)
+    table = db['tuits']
     res = db.query(query)
 
     cherry_tweets = []
@@ -244,11 +266,16 @@ def report_cherry():
         if date > DATE_LIMIT:
             i['created_at'] = date.strftime('%b %d, %Y')
             i['tweet_id'] = str(i['tweet_id'])
+            i['orig_status'] = i['status']
             i['status'] = process_tuit_msg(i['status'])
             cherry_tweets.append(i)
     f = codecs.open("cherry_tweets.json", "w", "utf-8")
     for i in cherry_tweets:
         f.write(json.dumps(i) + "\n")
+        i['retweeted'] = "yes"
+        retweet(i)
+        i['tweet_id'] = int(i['tweet_id'])
+        table.update(i, ['tweet_id'])
     f.close()
 
 

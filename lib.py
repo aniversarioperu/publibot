@@ -23,18 +23,26 @@ def generate_site():
     report_cherry()
     shutil.copy2(
             os.path.join(config.local_folder, "cherry_tweets.json"),
-            os.path.join(config.dest_folder)
+            os.path.join(config.dest_folder, "cherry_tweets.json")
     )
     shutil.copy2(
             os.path.join(config.local_folder, "index.html"),
-            os.path.join(config.dest_folder)
+            os.path.join(config.dest_folder, "index.html")
     )
     shutil.copy2(
             os.path.join(config.local_folder, "js/get_tweets.js"),
-            os.path.join(config.dest_folder, "js")
+            os.path.join(config.dest_folder, "js/get_tweets.js")
+    )
+    shutil.copy2(
+            os.path.join(config.local_folder, "css/style.css"),
+            os.path.join(config.dest_folder, "css/style.css")
+    )
+    shutil.copy2(
+            os.path.join(config.local_folder, "config.py"),
+            os.path.join(config.dest_folder, "config.py")
     )
     cmd = "rsync -au " + os.path.join(config.local_folder, "screenshots/*")
-    cmd += " " + os.path.join(config.dest_folder, "screenshots/.")
+    cmd += " " + config.dest_folder + "/screenshots/.")
     p = subprocess.check_call(cmd, shell=True)
 
 

@@ -218,7 +218,7 @@ def report_cherry():
         line = line.strip()
         query += "status like '%" + line + "%' OR "
     query = re.sub(" OR $", "", query)
-    query += " order by tweet_id desc limit 20"
+    query += " order by tweet_id desc"
 
     # publicidad está prohibida desde esta fecha
     DATE_LIMIT = datetime(2014, 1, 24, 0, 0)

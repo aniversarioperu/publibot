@@ -1,11 +1,9 @@
-.well {
-    background-color: #fff;
+footer {
+    color: #aaaaaa;
+    background-color: #444444;
 }
 .hr-footer {
-    border-top: 1px solid #fe3a0d;
-}
-footer {
-    color: #fff;
+    border-top: 1px solid #bbbbbb;
 }
 footer a,
 footer a:focus {
@@ -85,8 +83,8 @@ body {
 
 .footer {
   border-top: 1px solid #eee;
-  margin-top: 40px;
-  padding-top: 40px;
+  margin-top: 80px;
+  padding-top: 30px;
   padding-bottom: 40px;
 }
 

@@ -1,10 +1,9 @@
 (function( $ ) {
-    $.load_tuits = function() {
-$.getJSON("data_handler.py", {start: start} )
+    $.load_tuits = function( start ) {
+    $.getJSON("data_handler.py", {start: start} )
     .done(function(data) {
-        console.log(data);
-    var items = [];
-    $.each(data.out, function(key, val){
+        var items = [];
+        $.each(data.out, function(key, val){
         var out = "<div class='media'>\n";
         out += "<span class='pull-left' href='#'>";
         out += "<img class='img-rounded' src='avatars/" + val.screen_name + ".jpg' />";
@@ -35,8 +34,13 @@ $.getJSON("data_handler.py", {start: start} )
 
     var end = start + 20;
     $("#tuits").append(items);
-    var button = '<div class="well"><button onclick="$.load_tuits(' + end + ');" id="load_more_tweets" type="button" class="btn btn-primary btn-lg btn-block">Load more tweets</button></div>';
+    var button = '<button onclick="$.load_tuits(' + end + ');" id="button_' + start + '" type="button" class="btn btn-primary btn-lg btn-block">Load more tweets</button>';
     $("#tuits").append("<div class='load_more'>" + button + "</div>");
+        if( start > 0 ) {
+            myvalue = start - 20;
+            $("#button_" + myvalue).fadeOut();
+            console.log(myvalue);
+        }
 });
 };
 })(jQuery);
@@ -45,7 +49,4 @@ $(document).ready(function() {
 start = 0;
 $.load_tuits(start);
 
-$("#load_more_tweets").click(function() {
-    $.load_tuits(start);
-});
 });

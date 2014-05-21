@@ -262,7 +262,10 @@ def report_cherry():
 
     cherry_tweets = []
     for i in res:
-        date = datetime.strptime(i['created_at'], "%a %b %d %H:%M:%S +%f %Y")
+        try:
+            date = datetime.strptime(i['created_at'], "%a %b %d %H:%M:%S +%f %Y")
+        except:
+            date = datetime.strptime(i['created_at'], "%b %d, %Y")
         if date > DATE_LIMIT:
             i['created_at'] = date.strftime('%b %d, %Y')
             i['tweet_id'] = str(i['tweet_id'])

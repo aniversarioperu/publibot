@@ -83,7 +83,7 @@ def upload_starting_data():
             date = datetime.strptime(tuit['created_at'], "%a %b %d %H:%M:%S +%f %Y")
             if date > DATE_LIMIT:
                 tuit['screen_name'] = tuit['screen_name'].lower()
-                if not table.find(tweet_id=tuit['tweet_id']):
+                if not table.find_one(tweet_id=tuit['tweet_id']):
                     tuits.append(tuit)
                     print "Tuit inserted to db", tuit['tweet_id']
     table.insert_many(tuits)

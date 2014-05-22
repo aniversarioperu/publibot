@@ -78,7 +78,8 @@ def upload_starting_data():
         for line in handle.readlines():
             tuit = json.loads(line.strip())
             tuit['screen_name'] = tuit['screen_name'].lower()
-            tuits.append(tuit)
+            if not table.find(tweet_id=tuit['tweet_id']):
+                tuits.append(tuit)
     table.insert_many(tuits)
 
 

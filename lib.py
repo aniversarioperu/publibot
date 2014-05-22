@@ -270,13 +270,13 @@ def report_cherry():
             i['created_at'] = date.strftime('%b %d, %Y')
             i['tweet_id'] = str(i['tweet_id'])
             i['orig_status'] = i['status']
-            i['status'] = process_tuit_msg(i['status'])
+            i['status'] = i['status']
+            # this regex is not working ok
+            # i['status'] = process_tuit_msg(i['status'])
             cherry_tweets.append(i)
     f = codecs.open("cherry_tweets.json", "w", "utf-8")
     for i in cherry_tweets:
         f.write(json.dumps(i) + "\n")
-        i['tweet_id'] = int(i['tweet_id'])
-        table.update(i, ['tweet_id'])
     f.close()
 
 

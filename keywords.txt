@@ -1,4 +1,7 @@
+actual
+ahora
 ampliación
+antes
 anunciando ejecución
 anunciando la ejecución
 avance
@@ -11,25 +14,32 @@ cuentan con
 cumple
 cumplió
 disfruta
-ejecuci
-entreg
+ejecucion
+ejecución
+entrega
 entrega de
 entrega de obra
+entregó
 gestión
 gratis
 gratuito
 inaugur
+inaugura
+inauguración
 inicio de obra
 invitamos
 libre
 mejora
 moderniz
+modernización
 nuevo
 obra
 promoción
 recibi
 regalo
 restaur
+restauración
+restauró
 resultado
 servicio
 sorteo

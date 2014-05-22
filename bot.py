@@ -36,6 +36,14 @@ parser.add_argument(
     required=False,
     dest='report',
 )
+parser.add_argument(
+    '-g',
+    '--generate',
+    action='store_true',
+    help='Generate site',
+    required=False,
+    dest='generate',
+)
 
 args = parser.parse_args()
 
@@ -121,8 +129,9 @@ def main():
 
     # authorities list
     # run this the first time only
-    # user_list = get_user_list()
-    # get_recent_tweets(user_list)
+    if args.generate:
+        user_list = get_user_list()
+        get_recent_tweets(user_list)
 
     # this is for updating, run as needed
     if args.update:

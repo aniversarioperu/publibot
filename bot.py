@@ -40,7 +40,7 @@ parser.add_argument(
     '-f',
     '--first_time_download',
     action='store_true',
-    help='Descargar 3200 tuits más recientes',
+    help=u'Descargar 3200 tuits más recientes',
     required=False,
     dest='firstime',
 )

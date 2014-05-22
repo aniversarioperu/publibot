@@ -68,6 +68,9 @@ def create_database():
 def upload_starting_data():
     create_database()
 
+    # publicidad está prohibida desde esta fecha
+    DATE_LIMIT = datetime(2014, 1, 24, 0, 0)
+
     dbfile = os.path.join(config.local_folder, "tuits.db")
     db = dataset.connect("sqlite:///" + dbfile)
     table = db['tuits']
@@ -77,9 +80,12 @@ def upload_starting_data():
     with codecs.open(filename, "r", "utf-8") as handle:
         for line in handle.readlines():
             tuit = json.loads(line.strip())
-            tuit['screen_name'] = tuit['screen_name'].lower()
-            if not table.find(tweet_id=tuit['tweet_id']):
-                tuits.append(tuit)
+            date = datetime.strptime(tuit['created_at'], "%a %b %d %H:%M:%S +%f %Y")
+            if date > DATE_LIMIT:
+                tuit['screen_name'] = tuit['screen_name'].lower()
+                if not table.find(tweet_id=tuit['tweet_id']):
+                    tuits.append(tuit)
+                    print "Tuit inserted to db", tuit['tweet_id']
     table.insert_many(tuits)
 
 

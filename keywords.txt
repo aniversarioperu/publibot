@@ -1,5 +1,5 @@
-actual
-ahora
+actual 
+ahora 
 ampliación
 antes
 anunciando ejecución
@@ -11,7 +11,7 @@ campaña
 construcción
 contruccion
 cuentan con
-cumple
+cumple 
 cumplió
 disfruta
 ejecucion

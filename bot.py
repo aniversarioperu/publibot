@@ -37,12 +37,12 @@ parser.add_argument(
     dest='report',
 )
 parser.add_argument(
-    '-g',
-    '--generate',
+    '-f',
+    '--first_time_download',
     action='store_true',
-    help='Generate site',
+    help='Descargar 3200 tuits más recientes',
     required=False,
-    dest='generate',
+    dest='firstime',
 )
 
 args = parser.parse_args()
@@ -129,7 +129,7 @@ def main():
 
     # authorities list
     # run this the first time only
-    if args.generate:
+    if args.firstime:
         user_list = get_user_list()
         get_recent_tweets(user_list)
 

@@ -101,14 +101,14 @@ def get_since_id(twitter_handle, db):
         return since_id
 
 
-def update_our_database():
+def update_our_database(lista_autoridades):
     create_database()
 
     # do connection here
     dbfile = os.path.join(config.local_folder, "tuits.db")
     db = dataset.connect("sqlite:///" + dbfile)
 
-    for user in get_user_list():
+    for user in get_user_list(lista_autoridades):
         twitter_handle = user[1].replace("@", "").lower()
         print twitter_handle
         #twitter_handle = "munimiraflores"
@@ -237,7 +237,6 @@ def retweet(i):
     payload = {
         'status': status,
     }
-    print payload
     try:
         sleep(6)
         r = requests.post(url, auth=oauth, params=payload)
@@ -258,7 +257,6 @@ def report_cherry():
         query += "status like '%" + line + "%' OR "
     query = re.sub(" OR $", "", query)
     query += " collate NOCASE order by tweet_id desc"
-    print query
 
     # publicidad está prohibida desde esta fecha
     DATE_LIMIT = datetime(2014, 1, 24, 0, 0)

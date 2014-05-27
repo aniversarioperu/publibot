@@ -143,6 +143,8 @@ def main():
         lib.report_cherry()
         print "** Generating site **"
         lib.generate_site()
+        print "** Do retweets **"
+        lib.do_retweets()
 
     if args.report:
         print "** Making report of tweets as JSON file **"

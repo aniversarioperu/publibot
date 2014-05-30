@@ -269,7 +269,7 @@ def do_retweets():
 
     # retweet between 8 and 23 hours
     retweeted = []
-    if now - FROM_TIME < 15:
+    if now - FROM_TIME < 15 and now - FROM_TIME > 0:
     # if now - FROM_TIME < 15:
         dbfile = os.path.join(config.local_folder, "tuits.db")
         db = dataset.connect("sqlite:///" + dbfile)

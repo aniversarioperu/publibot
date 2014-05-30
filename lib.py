@@ -45,6 +45,10 @@ def generate_site():
     cmd += " " + config.dest_folder + "/screenshots/."
     p = subprocess.check_call(cmd, shell=True)
 
+    cmd = "rsync -au " + os.path.join(config.local_folder, "avatars/*")
+    cmd += " " + config.dest_folder + "/avatars/."
+    p = subprocess.check_call(cmd, shell=True)
+
 
 def create_database():
     dbfile = os.path.join(config.local_folder, "tuits.db")
@@ -58,6 +62,7 @@ def create_database():
             table.create_column('user_id', sqlalchemy.BigInteger)
             table.create_column('status', sqlalchemy.Text)
             table.create_column('created_at', sqlalchemy.String)
+            table.create_column('retweeted', sqlalchemy.String)
             table.create_column('utc_offset', sqlalchemy.Integer)
             table.create_column('latitude', sqlalchemy.Float(precision=7))
             table.create_column('longitude', sqlalchemy.Float(precision=7))
@@ -75,7 +80,7 @@ def upload_starting_data():
     db = dataset.connect("sqlite:///" + dbfile)
     table = db['tuits']
 
-    filename = "tuits.json"
+    filename = os.path.join(config.local_folder, "tuits.json")
     tuits = []
     with codecs.open(filename, "r", "utf-8") as handle:
         for line in handle.readlines():
@@ -101,14 +106,14 @@ def get_since_id(twitter_handle, db):
         return since_id
 
 
-def update_our_database():
+def update_our_database(lista_autoridades):
     create_database()
 
     # do connection here
     dbfile = os.path.join(config.local_folder, "tuits.db")
     db = dataset.connect("sqlite:///" + dbfile)
 
-    for user in get_user_list():
+    for user in get_user_list(lista_autoridades):
         twitter_handle = user[1].replace("@", "").lower()
         print twitter_handle
         #twitter_handle = "munimiraflores"
@@ -137,7 +142,7 @@ def get_tuits_since(since_id, twitter_handle, db):
         'count': 200,
         'since_id': since_id,
     }
-    print payload
+    # print payload
     try:
         sleep(6)
         r = requests.get(url, auth=oauth, params=payload)
@@ -228,22 +233,57 @@ def process_tuit_msg(tuit):
 def retweet(i):
     oauth = api.get_oauth()
 
-    status = "#publicidadRestringida? RT @" + i['screen_name']
-    status += " " + i['orig_status'][0:80]
-    status += " " + "https://twitter.com/" + i['screen_name']
-    status += "/status/" + str(i['tweet_id'])
+    status = "#publicidadRestringida? RT " + i['screen_name'].upper()
+    status += " " + i['status'][0:80]
+    #status += " " + "https://twitter.com/" + i['screen_name']
+    #status += "/status/" + str(i['tweet_id'])
 
     url = "https://api.twitter.com/1.1/statuses/update.json"
     payload = {
         'status': status,
     }
-    print payload
     try:
-        sleep(6)
         r = requests.post(url, auth=oauth, params=payload)
-        print r.json()
+        # print r.json()
     except requests.exceptions.ConnectionError as e:
         print("Error", e)
+
+
+def do_retweets():
+    keywords = os.path.join(config.local_folder, "keywords.txt")
+
+    # make query
+    query = "select screen_name, tweet_id, created_at, status from tuits where "
+    for line in codecs.open(keywords, "r", "utf8").readlines():
+        line = line.strip()
+        query += "status like '%" + line + "%' OR "
+    query = re.sub(" OR $", "", query)
+    query += "AND retweeted='' collate NOCASE order by tweet_id desc"
+    query += " limit 5"
+    #print query
+
+    # publicidad está prohibida desde esta fecha
+    DATE_LIMIT = datetime(2014, 1, 24, 0, 0)
+    FROM_TIME = datetime.time(datetime.strptime("8:00", "%H:%M")).hour
+    now = datetime.time(datetime.now()).hour
+
+    # retweet between 8 and 23 hours
+    retweeted = []
+    if now - FROM_TIME < 15 and now - FROM_TIME > 0:
+    # if now - FROM_TIME < 15:
+        dbfile = os.path.join(config.local_folder, "tuits.db")
+        db = dataset.connect("sqlite:///" + dbfile)
+        table = db['tuits']
+        res = db.query(query)
+        for i in res:
+            i['retweeted'] = "yes"
+            retweeted.append(i)
+    if len(retweeted) > 0:
+        for i in retweeted:
+            table.update(i, ['tweet_id'])
+            retweet(i)
+            print "Retweeted %s" % i['status'].encode("utf8")
+            sleep(6)
 
 
 def report_cherry():
@@ -257,7 +297,7 @@ def report_cherry():
         line = line.strip()
         query += "status like '%" + line + "%' OR "
     query = re.sub(" OR $", "", query)
-    query += " order by tweet_id desc"
+    query += " collate NOCASE order by tweet_id desc"
 
     # publicidad está prohibida desde esta fecha
     DATE_LIMIT = datetime(2014, 1, 24, 0, 0)
@@ -287,8 +327,7 @@ def report_cherry():
     f.close()
 
 
-def get_profile_image_url():
-    user_list = get_user_list()
+def get_profile_image_url(user_list):
     oauth = api.get_oauth()
     for user in user_list:
         url = "https://api.twitter.com/1.1/users/show.json"

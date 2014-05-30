@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import argparse
 from argparse import RawTextHelpFormatter
@@ -23,8 +23,10 @@ parser = argparse.ArgumentParser(
 parser.add_argument(
     '-u',
     '--update',
-    action='store_true',
-    help='Bajar nuevos tuits, actualizar database, y capturar pantalla',
+    action='store',
+    help='''Bajar nuevos tuits, actualizar database, y capturar pantalla. Es
+    necesario especificar el archivo a usar.''',
+    metavar='lista_autoridades2.csv',
     required=False,
     dest='update',
 )
@@ -48,8 +50,8 @@ parser.add_argument(
 args = parser.parse_args()
 
 
-def get_user_list():
-    filename = os.path.join(config.local_folder, "lista_autoridades.csv")
+def get_user_list(lista_autoridades):
+    filename = os.path.join(config.local_folder, lista_autoridades)
     with codecs.open(filename, "r", "utf-8") as handle:
         user_list = [line.strip().split(",") for line in handle if '@' in line]
     return user_list
@@ -136,7 +138,14 @@ def main():
     # this is for updating, run as needed
     if args.update:
         print "** Updating database **"
-        lib.update_our_database()
+        lib.update_our_database(args.update.strip())
+        print "** Making report of tweets as JSON file **"
+        lib.report_cherry()
+        print "** Do retweets **"
+        lib.do_retweets()
+        print "** Get profile pictures **"
+        user_list = get_user_list(args.update.strip())
+        lib.get_profile_image_url(user_list)
         print "** Generating site **"
         lib.generate_site()
 

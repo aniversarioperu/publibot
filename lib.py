@@ -45,6 +45,10 @@ def generate_site():
     cmd += " " + config.dest_folder + "/screenshots/."
     p = subprocess.check_call(cmd, shell=True)
 
+    cmd = "rsync -au " + os.path.join(config.local_folder, "avatars/*")
+    cmd += " " + config.dest_folder + "/avatars/."
+    p = subprocess.check_call(cmd, shell=True)
+
 
 def create_database():
     dbfile = os.path.join(config.local_folder, "tuits.db")
@@ -323,8 +327,7 @@ def report_cherry():
     f.close()
 
 
-def get_profile_image_url():
-    user_list = get_user_list()
+def get_profile_image_url(user_list):
     oauth = api.get_oauth()
     for user in user_list:
         url = "https://api.twitter.com/1.1/users/show.json"

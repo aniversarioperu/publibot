@@ -141,10 +141,13 @@ def main():
         lib.update_our_database(args.update.strip())
         print "** Making report of tweets as JSON file **"
         lib.report_cherry()
-        print "** Generating site **"
-        lib.generate_site()
         print "** Do retweets **"
         lib.do_retweets()
+        print "** Get profile pictures **"
+        user_list = get_user_list(args.update.strip())
+        lib.get_profile_image_url(user_list)
+        print "** Generating site **"
+        lib.generate_site()
 
     if args.report:
         print "** Making report of tweets as JSON file **"

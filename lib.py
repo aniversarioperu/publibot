@@ -278,7 +278,7 @@ def do_retweets():
         for i in retweeted:
             table.update(i, ['tweet_id'])
             retweet(i)
-            print "Retweeted %s" % i['status']
+            print "Retweeted %s" % i['status'].encode("utf8")
             sleep(6)
 
 

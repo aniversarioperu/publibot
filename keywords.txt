@@ -7,6 +7,8 @@ anunciando la ejecución
 avance
 becas
 benefici
+callaolohace
+callaolohizo
 campaña
 construcción
 contruccion
@@ -19,6 +21,7 @@ ejecución
 entrega
 entrega de
 entrega de obra
+entregamosresultados
 entregó
 gestión
 gratis
